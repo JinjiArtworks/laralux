@@ -1,170 +1,284 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRM</title>
-    <meta name="description" content="">
-    <!-- Tailwind -->
-    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
-    <script src="https://unpkg.com/flowbite@1.3.4/dist/flowbite.js"></script>
-    <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.materialdesignicons.com/6.5.95/css/materialdesignicons.min.css" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Datum | CRM Admin Dashboard Template</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="{{ asset('images/favicon.ico') }}" />
+
+    <link rel="stylesheet" href="{{ asset('css/backend-plugin.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/backend.css?v=1.0.0') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"
+        type='text/css'>
+    <link rel="stylesheet" href="sweetalert2.min.css">
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="sweetalert2.all.min.js"></script>
 </head>
 
-<body class="bg-gray-100 font-family-karla flex">
-    <aside class="relative bg-sidebar h-screen w-64 hidden sm:block shadow-xl">
-        <div class="p-6">
-            <a href="/data-product" class="text-white text-3xl font-semibold uppercase hover:text-gray-300">CRM</a>
+<body class="  ">
+    <!-- loader Start -->
+    <div id="loading">
+        <div id="loading-center">
         </div>
-        <nav class="text-white text-base font-semibold pt-3">
-            <a href="/data-customer"
-                class="flex items-center opacity-75 hover:opacity-100  text-white py-4 pl-6 nav-item">
-                <i class="fas fa-tachometer-alt mr-3"></i>
-                Data Pelanggan
-            </a>
-            <a href="/data-product"
-                class="flex items-center  opacity-75 hover:opacity-100  text-white py-4 pl-6 nav-item">
-                <i class="fas fa-sticky-note mr-3"></i>
-                Data Produk
-            </a>
-            <a href="/data-category"
-                class="flex items-center text-white opacity-75 hover:opacity-100 py-4 pl-6 nav-item">
-                <i class="fas fa-sticky-note mr-3"></i>
-                Data Kategori
-            </a>
-            <a href="/data-jenis" class="flex items-center text-white opacity-75 hover:opacity-100 py-4 pl-6 nav-item">
-                <i class="fas fa-sticky-note mr-3"></i>
-                Data Jenis
-            </a>
-            <a href="/data-jenis" class="flex items-center text-white opacity-75 hover:opacity-100 py-4 pl-6 nav-item">
-                <i class="fas fa-sticky-note mr-3"></i>
-                Data Tipe
-            </a>
-            @if (Auth::user()->role == 'Owner')
-                <a href="/data-employee"
-                    class="flex items-center text-white opacity-75 hover:opacity-100 py-4 pl-6 nav-item">
-                    <i class="fas fa-sticky-note mr-3"></i>
-                    Data Karyawan
-                </a>
-            @endif
-        </nav>
-    </aside>
-    <div class="w-full flex flex-col h-screen overflow-y-hidden">
-        <!-- Desktop Header -->
-        <header class="w-full items-center bg-white py-2 px-6 hidden sm:flex">
-            <div class="w-1/2"></div>
-            <div x-data="{ isOpen: false }" class="relative w-1/2 flex justify-end">
-                <div class="block px-4 py-4 ">{{ Auth::user()->name }} - {{ Auth::user()->role }}</div>
-                <button @click="isOpen = !isOpen"
-                    class="realtive z-10 w-12 h-12 rounded-full overflow-hidden border-4 border-gray-400 hover:border-gray-300 focus:border-gray-300 focus:outline-none">
-                    <img src="https://source.unsplash.com/uJ8LNVCBjFQ/400x400">
-                </button>
-                <button x-show="isOpen" @click="isOpen = false"
-                    class="h-full w-full fixed inset-0 cursor-default"></button>
-                <div x-show="isOpen" class="absolute w-34 bg-white rounded-lg shadow-lg py-2 mt-16">
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button class="block px-4 py-2 account-link hover:text-white">
-                            {{ __('Sign Out') }}
+    </div>
+    <!-- loader END -->
+    <!-- Wrapper Start -->
+    <div class="wrapper">
+        <div class="iq-top-navbar">
+            <div class="iq-navbar-custom">
+                <nav class="navbar navbar-expand-lg navbar-light p-0">
+                    <div class="side-menu-bt-sidebar">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="text-secondary wrapper-menu" width="30"
+                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <button class="navbar-toggler" type="button" data-toggle="collapse"
+                            data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                            aria-label="Toggle navigation">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="text-secondary" width="30" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 6h16M4 12h16m-7 6h7" />
+                            </svg>
                         </button>
-                    </form>
+                        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                            <ul class="navbar-nav ml-auto navbar-list align-items-center">
+                                <li class="nav-item nav-icon search-content">
+                                    <a href="#" class="search-toggle rounded" id="dropdownSearch"
+                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <svg class="svg-icon text-secondary" id="h-suns" height="25"
+                                            width="25" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                            viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                        </svg>
+                                    </a>
+                                    <div class="iq-search-bar iq-sub-dropdown dropdown-menu"
+                                        aria-labelledby="dropdownSearch">
+                                        <form action="#" class="searchbox p-2">
+                                            <div class="form-group mb-0 position-relative">
+                                                <input type="text" class="text search-input font-size-12"
+                                                    placeholder="type here to search...">
+                                                <a href="#" class="search-link">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class=""
+                                                        width="20" fill="none" viewBox="0 0 24 24"
+                                                        stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="2"
+                                                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                                    </svg>
+                                                </a>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </li>
+                                <li class="nav-item nav-icon dropdown">
+                                    <a href="#" class="nav-item nav-icon dropdown-toggle pr-0 search-toggle"
+                                        id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                                        aria-expanded="false">
+                                        <img src="{{ asset('images/user/1.jpg') }}" class="img-fluid avatar-rounded"
+                                            alt="user">
+                                        <span class="mb-0 ml-2 user-name">{{ Auth::user()->name }}</span>
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                                        <li class="dropdown-item  d-flex svg-icon border-top">
+                                            <svg class="svg-icon mr-0 text-secondary" id="h-05-p" width="20"
+                                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                            </svg>
 
+                                            <form class="ml-2" id="logout-form" action="{{ route('logout') }}"
+                                                method="POST">
+                                                @csrf
+                                                <button type="submit" class="btn btn-sm bg-transparent"> Log
+                                                    Out</button>
+                                            </form>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+        </div>
+        <div class="iq-sidebar sidebar-default">
+            <div class="iq-sidebar-logo d-flex align-items-end justify-content-between">
+                <a href="/dashboard" class="header-logo">
+                    <img src="{{ asset('images/logo.png') }}" class="img-fluid rounded-normal light-logo"
+                        alt="logo">
+                    <img src="{{ asset('images/logo-dark.png') }}"
+                        class="img-fluid rounded-normal d-none sidebar-light-img" alt="logo">
+                    <span>Datum</span>
+                </a>
+                <div class="side-menu-bt-sidebar-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="text-light wrapper-menu" width="30"
+                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
                 </div>
             </div>
-        </header>
+            <div class="data-scrollbar" data-scroll="1">
+                <nav class="iq-sidebar-menu">
+                    <ul id="iq-sidebar-toggle" class="side-menu">
+                        <li class="px-3 pt-3 pb-2">
+                            <span class="text-uppercase small font-weight-bold">Administrator / {{ Auth::user()->roles }}</span>
+                        </li>
+
+                        <li class=" sidebar-layout">
+                            <a href="/data-room" class="svg-icon">
+                                <i class="">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" />
+                                    </svg>
+                                </i>
+                                <span class="ml-2">Room</span>
+                            </a>
+                        </li>
+                        <li class=" sidebar-layout">
+                            <a href="/data-hotel" class="svg-icon">
+                                <i class="">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" />
+                                    </svg>
+                                </i>
+                                <span class="ml-2">Hotel</span>
+                            </a>
+                        </li>
+                        <li class=" sidebar-layout">
+                            <a href="/data-fasilitas" class="svg-icon">
+                                <i class="">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" />
+                                    </svg>
+                                </i>
+                                <span class="ml-2">Fasilitas</span>
+                            </a>
+                        </li>
+                        <li class=" sidebar-layout">
+                            <a href="/data-membership" class="svg-icon">
+                                <i class="">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
+                                    </svg>
+                                </i>
+                                <span class="ml-2">Membership</span>
+                            </a>
+                        </li>
+                        <li class=" sidebar-layout">
+                            <a href="/data-hotel-type" class="svg-icon">
+                                <i class="">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2" />
+                                    </svg>
+                                </i>
+                                <span class="ml-2">Hotels Type</span>
+                            </a>
+                        </li>
+                        @if (Auth::user()->role == 'Super Admin')
+                            <li class=" sidebar-layout">
+                                <a href="/data-room-type" class="svg-icon">
+                                    <i class="">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
+                                            viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2" />
+                                        </svg>
+                                    </i>
+                                    <span class="ml-2">Rooms Type</span>
+                                </a>
+                            </li>
+                        @endif
+
+                    </ul>
+                </nav>
+                <div class="pt-5 pb-5"></div>
+            </div>
+        </div>
         @yield('content')
     </div>
+    <!-- Wrapper End-->
+    <footer class="iq-footer">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-6">
+                    <ul class="list-inline mb-0">
+                        <li class="list-inline-item"><a href="../backend/privacy-policy.html">Privacy Policy</a>
+                        </li>
+                        <li class="list-inline-item"><a href="../backend/terms-of-service.html">Terms of Use</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-lg-6 text-right">
+                    <span class="mr-1">
+                        Copyright
+                        <script>
+                            document.write(new Date().getFullYear())
+                        </script>© <a href="#" class="">Datum</a>
+                        All Rights Reserved.
+                    </span>
+                </div>
+            </div>
+        </div>
+    </footer> <!-- Backend Bundle JavaScript -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="{{ asset('/js/backend-bundle.min.js') }}"></script>
+    <!-- Chart Custom JavaScript -->
+    <script src="{{ asset('/js/customizer.js') }}"></script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js"
-        integrity="sha256-KzZiKy0DWYsnwMF+X1DvQngQ2/FxF7MF3Ff72XcpuPs=" crossorigin="anonymous"></script>
-    <!-- ChartJS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"
-        integrity="sha256-R4pqcOYV8lt7snxMQO/HSbVCFRPMdrhAFMH+vr9giYI=" crossorigin="anonymous"></script>
+    <script src="{{ asset('/js/sidebar.js') }}"></script>
 
-    <script>
-        var chartOne = document.getElementById('chartOne');
-        var myChart = new Chart(chartOne, {
-            type: 'bar',
-            data: {
-                labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-                datasets: [{
-                    label: '# of Votes',
-                    data: [12, 19, 3, 5, 2, 3],
-                    backgroundColor: [
-                        'rgba(255, 99, 132, 0.2)',
-                        'rgba(54, 162, 235, 0.2)',
-                        'rgba(255, 206, 86, 0.2)',
-                        'rgba(75, 192, 192, 0.2)',
-                        'rgba(153, 102, 255, 0.2)',
-                        'rgba(255, 159, 64, 0.2)'
-                    ],
-                    borderColor: [
-                        'rgba(255, 99, 132, 1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(75, 192, 192, 1)',
-                        'rgba(153, 102, 255, 1)',
-                        'rgba(255, 159, 64, 1)'
-                    ],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                    yAxes: [{
-                        ticks: {
-                            beginAtZero: true
-                        }
-                    }]
-                }
-            }
-        });
+    <!-- Flextree Javascript-->
+    <script src="{{ asset('/js/flex-tree.min.js') }}"></script>
+    <script src="{{ asset('/js/tree.js') }}"></script>
 
-        var chartTwo = document.getElementById('chartTwo');
-        var myLineChart = new Chart(chartTwo, {
-            type: 'line',
-            data: {
-                labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-                datasets: [{
-                    label: '# of Votes',
-                    data: [12, 19, 3, 5, 2, 3],
-                    backgroundColor: [
-                        'rgba(255, 99, 132, 0.2)',
-                        'rgba(54, 162, 235, 0.2)',
-                        'rgba(255, 206, 86, 0.2)',
-                        'rgba(75, 192, 192, 0.2)',
-                        'rgba(153, 102, 255, 0.2)',
-                        'rgba(255, 159, 64, 0.2)'
-                    ],
-                    borderColor: [
-                        'rgba(255, 99, 132, 1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(75, 192, 192, 1)',
-                        'rgba(153, 102, 255, 1)',
-                        'rgba(255, 159, 64, 1)'
-                    ],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                    yAxes: [{
-                        ticks: {
-                            beginAtZero: true
-                        }
-                    }]
-                }
-            }
-        });
-    </script>
-    <!-- <link rel="stylesheet" href="./assets/styles/styles.css" /> -->
-    <script defer src="https://unpkg.com/alpinejs@3.2.3/dist/cdn.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.5/flowbite.min.js"></script>
-    <script src="https://unpkg.com/ionicons@5.0.0/dist/ionicons.js"></script>
+    <!-- Table Treeview JavaScript -->
+    <script src="{{ asset('/js/table-treeview.js') }}"></script>
+
+    <!-- SweetAlert JavaScript -->
+    <script src="{{ asset('/js/sweetalert.js') }}"></script>
+
+    <!-- Vectoe Map JavaScript -->
+    <script src="{{ asset('/js/vector-map-custom.js') }}"></script>
+
+    <!-- Chart Custom JavaScript -->
+    <script src="{{ asset('/js/chart-custom.js') }}"></script>
+    <script src="{{ asset('/js/charts/01.js') }}"></script>
+    <script src="{{ asset('/js/charts/02.js') }}"></script>
+
+    <!-- slider JavaScript -->
+    <script src="{{ asset('/js/slider.js') }}"></script>
+
+    <!-- Emoji picker -->
+    <script src="{{ asset('/vendor/emoji-picker-element/index.js') }}" type="module"></script>
+
+
+    <!-- app JavaScript -->
+    <script src="{{ asset('/js/app.js') }}"></script>
 
     @yield('script')
 </body>

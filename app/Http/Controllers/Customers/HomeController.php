@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Customers;
 
-use App\Models\Product;
+use App\Models\Room;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 
@@ -15,9 +15,8 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $products = Product::all(); // already declated a has many from categories, its mean it is beloangsto categories
-        // return dd($products);
-        return view('customer.dashboard', compact('products'));
+        $room = Room::all(); // already declated a has many from categories, its mean it is beloangsto categories
+        return view('customer.dashboard', compact('room'));
     }
 
     public function create()

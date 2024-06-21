@@ -8,36 +8,36 @@
             <i class="fa-solid fa-chevron-right"></i>
         </span>
     </div>
-    <form action="{{ route('cart.add', ['id' => $products->id]) }}" method="POST">
+    <form action="{{ route('cart.add', ['id' => $room->id]) }}" method="POST">
         @csrf
         <div class="container grid grid-cols-2 gap-6">
             <div>
-                <img src="{{ asset('img/' . $products->image) }}" alt="product" class="w-full">
+                <img src="{{ asset('img/' . $room->image) }}" alt="product" class="w-full">
             </div>
             <div>
-                <h2 class="text-3xl font-medium uppercase mb-2"> {{ $products->name }}
+                <h2 class="text-3xl font-medium uppercase mb-2"> {{ $room->name }}
                 </h2>
 
                 <div class="space-y-2">
                     <p class="text-gray-800 font-semibold space-x-2">
                         <span>Availability: </span>
-                        <span class="text-green-600">In Stock ({{ $products->stock }})</span>
+                        <span class="text-green-600">In Stock ({{ $room->stock }})</span>
                     </p>
                     <p class="space-x-2">
                         <span class="text-gray-800 font-semibold">Brand: </span>
-                        <span class="text-gray-600">{{ $products->brand }}</span>
+                        <span class="text-gray-600">{{ $room->brand }}</span>
                     </p>
                     <p class="space-x-2">
                         <span class="text-gray-800 font-semibold">Category: </span>
-                        <span class="text-gray-600">{{ $products->categories->name }}</span>
+                        <span class="text-gray-600">{{ $room->categories->name }}</span>
                     </p>
                     <p class="space-x-2">
                         <span class="text-gray-800 font-semibold">Tipe: </span>
-                        <span class="text-gray-600">{{ $products->tipe->name }}</span>
+                        <span class="text-gray-600">{{ $room->tipe->name }}</span>
                     </p>
                     <p class="space-x-2">
                         <span class="text-gray-800 font-semibold">Size: </span>
-                        <span class="text-gray-600">{{ $products->dimension }}</span>
+                        <span class="text-gray-600">{{ $room->dimension }}</span>
                     </p>
                 </div>
                 <div class="flex items-baseline mb-1 space-x-2 font-roboto mt-4">
@@ -78,7 +78,7 @@
                 $('.count').val(parseInt($('.count').val()) + 1);
                 // alert('test');
                 // alert('asd');
-                if ($('.count').val() > {{ $products->stock }}) {
+                if ($('.count').val() > {{ $room->stock }}) {
                     $(':input[type="submit"]').prop('disabled', true);
                 }
             });
@@ -87,12 +87,12 @@
                 if ($('.count').val() == 0) {
                     $('.count').val(1);
                 }
-                if ($('.count').val() <= {{ $products->stock }}) {
+                if ($('.count').val() <= {{ $room->stock }}) {
                     $(':input[type="submit"]').prop('disabled', false);
                 }
             });
             $(document).on('click', '.add-to-cart', function() {
-                if ($('.count').val() > {{ $products->stock }}) {
+                if ($('.count').val() > {{ $room->stock }}) {
                     event.preventDefault();
                     alert('stock tidak tersedia');
                 }

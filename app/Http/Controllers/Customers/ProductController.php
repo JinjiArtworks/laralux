@@ -6,20 +6,21 @@ use App\Models\Categories;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use App\Models\Product;
+use App\Models\Room;
 
 class ProductController extends Controller
 {
     public function index()
     {
-        $products = Product::all();
-        // return dd($products);
-        return view('customer.shop', compact('products'));
+        $room = Room::all();
+        // return dd($room);
+        return view('customer.shop', compact('room'));
     }
     public function detail($id)
     {
-        $products = Product::find($id);
-        // return dd($products->name);
-        return view('customer.detail-product', compact('products'));
+        $room = Room::find($id);
+        // return dd($room->name);
+        return view('customer.detail-product', compact('room'));
     }
 
     public function create()

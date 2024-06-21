@@ -19,7 +19,7 @@
     <div class="container pb-16">
         <h2 class="text-2xl font-medium text-gray-800 uppercase mb-6 mt-10">top new arrival</h2>
         <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-            @foreach ($products as $item)
+            @foreach ($room as $item)
                 <div class="bg-white shadow rounded overflow-hidden group">
                     <div class="relative">
                         <a href="/detail-product/{{ $item->id }}">
@@ -31,11 +31,11 @@
                             <h4 class=" font-medium text-xl text-gray-800 hover:text-primary transition">
                                 {{ $item->name }} - {{ $item->brand }}</h4>
                         </a>
-                        <p class="text-sm text-gray-500 transition  mb-3">Kategori : {{ $item->categories->name }}
+                        <p class="text-sm text-gray-500 transition  mb-3">Fasiltas : {{ $item->facilities->name }}
                             <br>
                             <small>Stock : {{ $item->stock }} pcs</small>
                             <br>
-                            <small>Tipe : {{ $item->tipe->name }} </small>
+                            <small>Tipe : {{ $item->room_type->name }} </small>
                         </p>
                         <div class="flex items-baseline mb-1 space-x-2">
                             <p class="text-xl text-primary font-semibold">@currency($item->price)</p>

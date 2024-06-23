@@ -10,13 +10,13 @@ class Membership extends Model
     use HasFactory;
     protected $table = 'memberships';
     protected $guarded = ['id'];
-    protected $fillable = ['name', 'users_id', 'transactions_id'];
+    protected $fillable = ['name', 'users_id', 'transactions_id', 'status'];
     public function transaction()
     {
         return $this->belongsTo(Transaction::class);
     }
     public function users()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'users_id', 'id');
     }
 }

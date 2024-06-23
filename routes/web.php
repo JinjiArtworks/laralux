@@ -29,7 +29,7 @@ Route::middleware(['auth'])->group(function () {
     Route::group(['as' => 'cart.'], function () {
         Route::get('/cart', [CartController::class, 'index'])->name('index');
         Route::post('/add-to-cart/{id}', [CartController::class, 'addCart'])->name('add');
-        Route::get('/remove-from-cart/{id}', [CartController::class, 'index'])->name('remove');
+        Route::get('/remove-from-cart/{id}', [CartController::class, 'destroy'])->name('remove');
     });
     Route::group(['as' => 'checkout.'], function () {
         Route::post('/checkout', [CheckoutController::class, 'index'])->name('index');
@@ -39,11 +39,12 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/riwayat-order', [HistoryController::class, 'index'])->name('index');
         Route::get('/riwayat-detail/{id}', [HistoryController::class, 'detail'])->name('detail');
     });
+});
+
+Route::middleware(['auth', 'checkRole:Staff'])->group(function () {
     Route::group(['as' => 'room.'], function () {
-        Route::get('/data-room', [RoomController::class, 'index'])->name('dashboard');
-        Route::post('/store-room', [RoomController::class, 'store'])->name('store');
-        Route::put('/update-room', [RoomController::class, 'update'])->name('update');
-        Route::get('/delete-room/{id}', [RoomController::class, 'destroy'])->name('delete');
+        Route::get('/data-room', [RoomController::class, 'index']);
+        Route::resource('room', RoomController::class);
     });
     Route::group(['as' => 'hotel.'], function () {
         Route::get('/data-hotel', [HotelController::class, 'index']);
@@ -66,5 +67,4 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('room-type', RoomTypeController::class);
     });
 });
-
 require __DIR__ . '/auth.php';

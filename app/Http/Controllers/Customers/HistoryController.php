@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Customers;
 
 use App\Models\Order;
 use App\Models\OrderDetail;
+use App\Models\Transaction;
+use App\Models\TransactionDetail;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -18,13 +20,13 @@ class HistoryController extends Controller
     public function index()
     {
         $user = Auth::user()->id;
-        $orders = Order::whereUserId($user)->get(); // already declated a has many from categories, its mean it is beloangsto categories
+        $orders = Transaction::whereUserId($user)->get(); // already declated a has many from categories, its mean it is beloangsto categories
         return view('customer.riwayat-order', compact('orders'));
     }
     public function detail($id)
     {
         
-        $details = OrderDetail::whereOrderId($id)->get(); // already declated a has many from categories, its mean it is beloangsto categories
+        $details = TransactionDetail::whereTransactionsId($id)->get(); // already declated a has many from categories, its mean it is beloangsto categories
         // $test = OrderDetail::whereOrderId($id)->get('price'); // already declated a has many from categories, its mean it is beloangsto categories
         // $sumPendapatan = collect($details)->sum('price');
         // return dd($sumPendapatan);

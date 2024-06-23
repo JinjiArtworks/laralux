@@ -28,49 +28,58 @@ class RoomController extends Controller
     // Add products
     public function store(Request $request)
     {
-        if ($request->image != null) {
-            $destinationPath = '/img';
-            $request->image->move(public_path($destinationPath), $request->image->getClientOriginalName());
-            Room::create([
-                'name' => $request->name,
-                'image' => $request->image->getClientOriginalName(),
-                'price' => $request->price,
-                // 'rating' => $request->rating,
-                'status' => $request->status,
-                'facilities_id' => $request->facilities,
-                'room_type_id' => $request->room_type,
-                'hotels_id' => $request->hotels,
-            ]);
-        }
-        return redirect('/data-room');
+        $cleanedFilename = str_replace("C:\\fakepath\\", "", $request->image);
+        // if ($request->image != null) {
+        // $destinationPath = '/img';
+        // $cleanedFilename->move(public_path($destinationPath), $cleanedFilename);
+        // }
+        $room = Room::create([
+            'name' => $request->name,
+            'image' => $cleanedFilename,
+            'price' => $request->price,
+            // 'rating' => $request->rating,
+            'status' => $request->status,
+            'facilities_id' => $request->facilities,
+            'room_type_id' => $request->room_type,
+            'hotels_id' => $request->hotels,
+        ]);
+        return response()->json($room);
+
+        // return redirect('/data-room');
     }
-    public function update(Request $request)
+    public function show($id)
     {
-        // dd($request->all());
-        $id = $request->id;
-        $room = Room::find($id);
-        if ($request->image != null) {
-            $destinationPath = '/img';
-            $request->image->move(public_path($destinationPath), $request->image->getClientOriginalName());
-        }
+        $room = Room::findOrFail($id);
+        return response()->json($room);
+    }
+    public function update(Request $request, $id)
+    {
+        // dd($cleanedFilename)
+        $room = Room::findOrFail($id);
+        $cleanedFilename = str_replace("C:\\fakepath\\", "", $request->image);
+        // if ($request->image != null) {
+        // $destinationPath = '/img';
+        // $cleanedFilename->move(public_path($destinationPath), $cleanedFilename);
+        // }
         Room::where('id', $id)
             ->update(
                 [
                     'name' => $request->name,
-                    'image' => $request->image ? $request->image->getClientOriginalName() : $room->image,
+                    'image' => $cleanedFilename ? $cleanedFilename : $room->image,
                     'price' => $request->price,
-                    // 'rating' => $request->rating,
                     'status' => $request->status,
                     'facilities_id' => $request->facilities ? $request->facilities : $room->facilities_id,
                     'room_type_id' => $request->room_type ? $request->room_type : $room->room_type_id,
                     'hotels_id' => $request->hotels ? $request->hotels : $room->hotels_id,
                 ]
             );
-        return redirect('/data-room');
+        return response()->json($room);
+        // return redirect('/data-room');
     }
     public function destroy($id)
     {
-        Room::where('id', $id)->delete();
-        return redirect()->back();
+        $room = Room::findOrFail($id);
+        $room->delete();
+        return response()->json(['success' => 'Room deleted successfully']);
     }
 }

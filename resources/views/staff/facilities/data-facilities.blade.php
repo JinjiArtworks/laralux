@@ -14,8 +14,6 @@
                             </div>
                         </div>
                         <div class="card-body">
-                            <p>Images in Bootstrap are made responsive to the image so that it scales
-                                with the parent element.</p>
                             <div class="table-responsive">
                                 <table id="datatable-1" class="table data-table table-striped table-bordered">
                                     <thead>
@@ -67,11 +65,11 @@
                             <input type="hidden" id="fasilitas_id">
                             <div class="form-group">
                                 <label for="name">Name</label>
-                                <input type="text" id="name" class="form-control">
+                                <input type="text" id="name" class="form-control" required>
                             </div>
                             <div class="form-group">
                                 <label for="description">Description</label>
-                                <textarea type="text" id="description" class="form-control"></textarea>
+                                <textarea type="text" id="description" class="form-control" required></textarea>
                             </div>
                         </div>
                         <div class="modal-footer">

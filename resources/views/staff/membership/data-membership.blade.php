@@ -27,8 +27,8 @@
                                     <tbody id="membership-table">
                                         @foreach ($membership as $item)
                                             <tr id="membership-{{ $item->id }}">
-                                                {{-- <td>{{ $item->users }}</td> --}}
-                                                <td>{{ $item->users_id }}</td>
+                                                <td>{{ $item->users->name }}</td>
+                                                {{-- <td>{{ $item->users_id }}</td> --}}
                                                 <td>{{ $item->name }}</td>
                                                 @if ($item->transaction_id != null)
                                                     <td>{{ $item->transaction_id }}</td>
@@ -70,11 +70,17 @@
                             <input type="hidden" id="membership_id">
                             <div class="form-group">
                                 <label for="name">Name</label>
-                                <input type="text" id="name" class="form-control">
+                                <input type="text" id="name" class="form-control" required>
                             </div>
                             <div class="form-group">
                                 <label for="users_id">User </label>
-                                <input type="text" id="users_id" class="form-control">
+                                <select class="form-control" id="users_id" required>
+                                    <option value="">-- Pilih User --</option>
+                                    @foreach ($user as $item)
+                                        <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                    @endforeach
+                                </select>
+                                {{-- <input type="text" id="users_id" class="form-control"> --}}
                             </div>
                             {{-- <div class="form-group">
                                 <label for="membership_type">Hotel Type</label>
@@ -133,6 +139,22 @@
                         success: function(response) {
                             $('#membershipModal').modal('hide');
                             location.reload();
+                        },
+                        error: function(response) {
+                            if (response.status === 422) {
+                                // Handle validation errors
+                                Swal.fire({
+                                    title: 'Gagal menyimpan data',
+                                    text: 'User ini telah terdaftar sebagai member',
+                                    icon: 'info',
+                                    confirmButtonColor: '#3085d6',
+                                    cancelButtonColor: '#d33',
+                                    confirmButtonText: 'OK'
+                                })
+                            } else {
+                                // Handle other errors
+                                alert('An error occurred.');
+                            }
                         }
                     });
                 }
@@ -165,7 +187,7 @@
                         url: '/membership/' + id,
                         method: 'DELETE',
                         success: function(response) {
-                            $('#hotel-' + id).remove();
+                            $('#membership-' + id).remove();
                         }
                     });
                 }

@@ -7,16 +7,13 @@
                     <div class="card">
                         <div class="card-header d-flex justify-content-between">
                             <div class="header-title">
-                                <h4 class="card-title">Daftar room </h4>
+                                <h4 class="card-title">Daftar Room</h4>
                             </div>
                             <div class="header-action">
-                                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
-                                    data-target=".modal-room">Tambah room</button>
+                                <button class="btn btn-sm btn-primary" onclick="showCreateForm()">Add Room</button>
                             </div>
                         </div>
                         <div class="card-body">
-                            <p>Images in Bootstrap are made responsive to the image so that it scales
-                                with the parent element.</p>
                             <div class="table-responsive">
                                 <table id="datatable-1" class="table data-table table-striped table-bordered">
                                     <thead>
@@ -24,16 +21,16 @@
                                             <th>No Reff</th>
                                             <th>Nama Akun</th>
                                             <th>Nama Akun</th>
-                                            <th>Akun room</th>
+                                            <th>Tipe Room</th>
                                             <th class="text-right">Saldo</th>
                                             <th>Saldo Normal</th>
                                             <th>Status</th>
                                             <th>Aksi</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
+                                    <tbody id="room-table">
                                         @foreach ($room as $item)
-                                            <tr>
+                                            <tr id="room-{{ $item->id }}">
                                                 <th>
                                                     <img src="{{ asset('img/' . $item->image) }}" width="50px"
                                                         alt="">
@@ -45,47 +42,18 @@
                                                 <td> @currency($item->price) </td>
                                                 <td> {{ $item->status }} </td>
                                                 <td>
-                                                    <div class="d-flex">
-                                                        <button class="btn btn-primary btn-sm mr-1" type="button"
-                                                            data-toggle="tooltip" data-placement="top" title="Detail room">
-                                                            <i class="fa-solid fa-book"></i>
-                                                        </button>
-                                                        <button class="btn btn-warning btn-sm mr-1" type="button"
-                                                            data-toggle="modal" data-target=".modal-edit-room"
-                                                            data-id="{{ $item->id }}" data-name="{{ $item->name }}"
-                                                            data-image="{{ $item->image }}"
-                                                            data-price="{{ $item->price }}"
-                                                            data-rating="{{ $item->rating }}"
-                                                            data-facilities="{{ $item->facilities_id }}"
-                                                            data-rooms_type="{{ $item->room_type_id }}"
-                                                            data-hotels="{{ $item->hotels_id }}"
-                                                            data-status="{{ $item->status }}" data-placement="top"
-                                                            title="Edit room">
-                                                            <i class="fa-solid fa-pencil"></i>
-                                                        </button>
-                                                        {{-- <form method="GET" action="{{ route('room.delete', ['id' => $item->id]) }}">
-                                                            <button type="submit"
-                                                                class="confirmDelete btn btn-sm btn-danger">
-                                                                <i class="fa fa-trash"></i>
-                                                            </button>
-                                                        </form> --}}
-                                                    </div>
+                                                    <button class="btn btn-sm btn-info"
+                                                        onclick="editRoom({{ $item->id }})">
+                                                        <i class="fa-solid fa-pencil"></i>
+                                                    </button>
+                                                    <button class="btn btn-sm btn-danger"
+                                                        onclick="deleteRoom({{ $item->id }})">
+                                                        <i class="fa fa-trash"></i>
+                                                    </button>
                                                 </td>
                                             </tr>
                                         @endforeach
                                     </tbody>
-                                    <tfoot>
-                                        <tr>
-                                            <th>No Reff</th>
-                                            <th>Nama Akun</th>
-                                            <th>Tipe room</th>
-                                            <th class="text-right">Saldo</th>
-                                            <th>Saldo Normal</th>
-                                            <th>Aksi</th>
-                                            <th>Aksi</th>
-                                            <th>Aksi</th>
-                                        </tr>
-                                    </tfoot>
                                 </table>
                             </div>
                         </div>
@@ -93,18 +61,18 @@
                 </div>
             </div>
         </div>
-        <div class="modal fade modal-room" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
-            <div class="modal-dialog modal-lg">
+        <div class="modal fade" id="roomModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Tambah room</h5>
+                        <h5 class="modal-title" id="modalTitle"></h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times</span>
+                            <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <form method="POST" action="{{ route('room.store') }}" enctype="multipart/form-data">
-                        @csrf
+                    <form id="roomForm" enctype="multipart/form-data">
                         <div class="modal-body">
+                            <input type="hidden" id="room_id">
                             <div class="form-group">
                                 <label>Nama Kamar</label>
                                 <input class="form-control" id="name" name="name" type="text" required
@@ -112,7 +80,7 @@
                             </div>
                             <div class="form-group">
                                 <label>Fasilitas</label>
-                                <select class="form-control" name="facilities">
+                                <select class="form-control" name="facilities" id="facilities_id">
                                     <option value="">-- Pilih Fasilitas --</option>
                                     @foreach ($facilities as $item)
                                         <option value="{{ $item->id }}">{{ $item->name }}</option>
@@ -121,7 +89,7 @@
                             </div>
                             <div class="form-group">
                                 <label>Tipe Room</label>
-                                <select class="form-control" name="room_type" id="">
+                                <select class="form-control" name="room_type" id="room_type_id">
                                     <option value="">-- Pilih Tipe Room --</option>
                                     @foreach ($room_type as $item)
                                         <option value="{{ $item->id }}">{{ $item->name }}</option>
@@ -130,7 +98,7 @@
                             </div>
                             <div class="form-group">
                                 <label>Hotel</label>
-                                <select class="form-control" name="hotels" id="">
+                                <select class="form-control" name="hotels" id="hotels_id">
                                     <option value="">-- Pilih Hotel --</option>
                                     @foreach ($hotel as $item)
                                         <option value="{{ $item->id }}">{{ $item->name }}</option>
@@ -139,7 +107,7 @@
                             </div>
                             <div class="form-group">
                                 <label>Status</label>
-                                <select class="form-control" name="status" id="">
+                                <select class="form-control" name="status" id="status">
                                     <option value="Available">Available</option>
                                     <option value="Not Available">Not Available</option>
                                 </select>
@@ -150,96 +118,20 @@
                                     placeholder="Harga Kamar" aria-label="price">
                             </div>
                             <div class="form-group">
-                                <img src="{{ asset('img/no-profile.png') }}" id="setImages" width="150px"
-                                    height="150px">
-                                <input class="form-control" accept="image/*" id="image" type="file"
-                                    name="image" required>
+                                <img src="{{ asset('img/no-profile.png') }}" id="setImages" width="150px" height="150px">
+                                <input class="form-control" accept="image/*" id="image" type="file" name="image"
+                                    required>
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary btn-sm close-modal">Close</button>
-                            <button type="button" class="btn btn-primary btn-sm confirm-add">Save changes</button>
+                            <button type="button" data-dismiss="modal" aria-label="Close"
+                                class="btn btn-secondary btn-sm">Close</button>
+                            <button type="submit" class="btn btn-primary btn-sm ">Save changes</button>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
-        <!-- Edit room Modal -->
-        <div class="modal fade modal-edit-room" tabindex="-1" role="dialog" aria-hidden="true">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <form id="editroomForm" method="POST" action="{{ route('room.update') }}"  enctype="multipart/form-data">
-                        @csrf
-                        @method('PUT')
-                        <div class="modal-header">
-                            <h5 class="modal-title">Edit room</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            <input type="hidden" id="editRoomId" name="id">
-                            <div class="form-group">
-                                <label>Nama Kamar</label>
-                                <input class="form-control" id="editRoomName" name="name" type="text" required
-                                    placeholder="Nama Kamar" aria-label="Name">
-                            </div>
-
-                            <div class="form-group">
-                                <label>Fasilitas</label>
-                                <select class="form-control" id="editFacilities" name="facilities">
-                                    <option value="">-- Pilih Fasilitas --</option>
-                                    @foreach ($facilities as $item)
-                                        <option value="{{ $item->id }}">{{ $item->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label>Tipe Room</label>
-                                <select class="form-control" name="room_type" id="editRoomsType">
-                                    <option value="">-- Pilih Tipe Room --</option>
-                                    @foreach ($room_type as $item)
-                                        <option value="{{ $item->id }}">{{ $item->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label>Hotel</label>
-                                <select class="form-control" name="hotels" id="editHotels">
-                                    <option value="">-- Pilih Hotel --</option>
-                                    @foreach ($hotel as $item)
-                                        <option value="{{ $item->id }}">{{ $item->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label>Status</label>
-                                <select class="form-control" name="status" id="editStatus">
-                                    <option value="Available">Available</option>
-                                    <option value="Not Available">Not Available</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label>Harga</label>
-                                <input class="form-control" id="editPrice" name="price" required type="number"
-                                    placeholder="Harga Kamar" aria-label="price">
-                            </div>
-                            <div class="form-group">
-                                <img src="{{ asset('img/no-profile.png') }}" id="setImagesEdit" width="150px"
-                                    height="150px">
-                                <input class="form-control" accept="image/*" id="image" type="file"
-                                    name="image" required>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary btn-sm close-modal-edit">Close</button>
-                            <button type="button" class="btn btn-primary btn-sm confirm-update">Save changes</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-
     </div>
 @endsection
 @section('script')
@@ -248,98 +140,97 @@
             const [file] = image.files
             if (file) {
                 setImages.src = URL.createObjectURL(file)
+                console.log(setImages.src);
             }
         }
-        $(document).ready(function() {
-            // Add click event listener to all buttons with the class "close-modal"
-            $('.close-modal').click(function() {
-                $('.modal-room').modal('hide')
-            })
-            $('.close-modal-edit').click(function() {
-                $('.modal-edit-room').modal('hide')
-            })
-            // Modal edit
-            $('.modal-edit-room').on('show.bs.modal', function(event) {
-                console.log('asdasd');
-                var target = $(event.relatedTarget)
-                var id = target.data('id')
-                var name = target.data('name')
-                var image = target.data('image')
-                var price = target.data('price')
-                var rating = target.data('rating')
-                var facilities = target.data('facilities')
-                var hotels = target.data('hotels')
-                var rooms_type = target.data('rooms_type')
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
 
-                var modal = $(this)
-                modal.find('#editRoomId').val(id)
-                modal.find('#editRoomName').val(name)
-                modal.find('#setImagesEdit').val(image)
-                modal.find('#editPrice').val(price)
-                modal.find('#editRating').val(rating)
-                // modal.find('#editFacilities').val(facilities)
-                modal.find('#editHotels').val(hotels)
-                // modal.find('#editRoomsType').val(rooms_type)
-                // modal.find('#editTiperoom').val(tipe_room)
-                modal.find('#editHotels option[value="' + hotels + '"]').prop('selected', true);
-                modal.find('#editRoomsType option[value="' + rooms_type + '"]').prop('selected', true);
-                modal.find('#editFacilities option[value="' + facilities + '"]').prop('selected', true);
-            })
+        function showCreateForm() {
+            $('#roomForm')[0].reset();
+            $('#room_id').val('');
+            $('#modalTitle').text('Add room');
+            $('#roomModal').modal('show');
+        }
 
-            // Confirmation Button
-            $('.confirmDelete').click(function(event) {
-                console.log('asd');
-                // event.preventDefault()
-                // var form = $(this).closest("form")
-                // Swal.fire({
-                //     title: 'Hapus Data?',
-                //     text: 'Data ini akan terhapus secara permanen',
-                //     icon: 'warning',
-                //     showCancelButton: true,
-                //     confirmButtonColor: '#3085d6',
-                //     cancelButtonColor: '#d33',
-                //     confirmButtonText: 'Yes'
-                // }).then((result) => {
-                //     if (result.isConfirmed) {
-                //         form.submit()
-                //     }
-                // })
+        $('#roomForm').submit(function(e) {
+            e.preventDefault();
+            var id = $('#room_id').val();
+            var url = id ? '/room/' + id : '/room'; // if edit, will using id
+            var type = id ? 'PUT' : 'POST'; // if edit, use put
+            Swal.fire({
+                title: 'Simpan Data?',
+                text: 'Pastikan data yang Anda masukkan benar',
+                icon: 'success',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: url,
+                        method: type,
+                        data: {
+                            name: $('#name').val(),
+                            status: $('#status').val(),
+                            facilities: $('#facilities_id').val(),
+                            hotels: $('#hotels_id').val(),
+                            room_type: $('#room_type_id').val(),
+                            price: $('#price').val(),
+                            image: $('#image').val()
+                        },
+                        success: function(response) {
+                            $('#roomModal').modal('hide');
+                            location.reload();
+                        }
+                    });
+                }
             })
+        });
 
-            $('.confirm-update').click(function(event) {
-                event.preventDefault()
-                var form = $(this).closest("form")
-                Swal.fire({
-                    title: 'Konfirmasi Data?',
-                    text: 'Pastikan data yang anda masukkan sudah benar',
-                    icon: 'success',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Yes'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        form.submit()
-                    }
-                })
+        function editRoom(id) {
+            $.get('/room/' + id, function(room) {
+                // rom.[coloumn name by using findorfail in show function method]
+                $('#room_id').val(room.id);
+                $('#name').val(room.name);
+                $('#facilities_id').val(room.facilities_id);
+                $('#hotels_id').val(room.hotels_id);
+                $('#room_type_id').val(room.room_type_id);
+                $('#status').val(room.status);
+                $('#price').val(room.price);
+                // $('#image').val(room.image);
+                $('#setImages').attr('src', room.image ? '/img/' + room.image :
+                    '{{ asset('img/no-profile.png') }}');
+                // End of the Selection
+                $('#modalTitle').text('Edit Room');
+                $('#roomModal').modal('show');
+            });
+        }
+
+        function deleteRoom(id) {
+            Swal.fire({
+                title: 'Hapus Data?',
+                text: 'Data yang anda pilih akan dihapus secara permanen',
+                icon: 'success',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '/room/' + id,
+                        method: 'DELETE',
+                        success: function(response) {
+                            $('#room-' + id).remove();
+                        }
+                    });
+                }
             })
-            $('.confirm-add').click(function(event) {
-                event.preventDefault()
-                var form = $(this).closest("form")
-                Swal.fire({
-                    title: 'Konfirmasi Data?',
-                    text: 'Pastikan data yang anda masukkan benar',
-                    icon: 'success',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Yes'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        form.submit()
-                    }
-                })
-            })
-        })
+        }
     </script>
 @endsection

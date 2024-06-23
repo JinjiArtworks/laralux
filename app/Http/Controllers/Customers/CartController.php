@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Customers;
 
 use App\Models\Product;
+use App\Models\Room;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -24,29 +25,23 @@ class CartController extends Controller
     public function addCart(Request $request, $id)
     {
         $user = Auth::user()->id;
-        $product = Product::find($id);
-        // return dd($product->dimension);
+        $room = Room::find($id);
         $cart = session()->get('cart');
+        // dd($cart);
         if (!isset($cart[$id])) {
             // Cart ada isi nya
             $cart[$id] = [
                 "user_id" => $user,
-                "id" => $product->id,
-                "name" => $product->name,
-                "price" => $product->price,
-                "categories" => $product->categories,
-                "dimension" => $product->dimension,
-                "tipe" => $product->tipe->name,
-                "jenis" => $product->jenis->name,
-                "image" => $product->image,
-                "quantity" => $request->post('quantity'),
-                "total_after_disc" => $product->price  * $request->post('quantity')
+                "id" => $room->id,
+                "name" => $room->name,
+                "image" => $room->image,
+                "price" => $room->price,
+                "facilities" => $room->facilities->name,
+                "room_type" => $room->room_type->name,
+                "hotels" => $room->hotels->name,
             ];
-        } else {
-            $cart[$id]["quantity"] += $request->post('quantity');
-            $cart[$id]["total_after_disc"] += $request->post('quantity') * $product->price;
+            session()->put('cart', $cart);
         }
-        session()->put('cart', $cart);
         return redirect('/cart')->with('success', 'Produk berhasil ditambahkan kedalam keranjang');
     }
     /**
@@ -112,6 +107,11 @@ class CartController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $cart = session()->get('cart');
+        if (isset($cart[$id])) {
+            unset($cart[$id]);
+        }
+        session()->put('cart', $cart);
+        return redirect('/cart')->with('info', 'Produk berhasil dihapus');
     }
 }

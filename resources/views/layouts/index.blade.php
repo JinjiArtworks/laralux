@@ -15,11 +15,10 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"
         type='text/css'>
     <link rel="stylesheet" href="sweetalert2.min.css">
-
+    <script src="sweetalert2.all.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="sweetalert2.all.min.js"></script>
 </head>
 
 <body class="  ">
@@ -90,7 +89,8 @@
                                             alt="user">
                                         <span class="mb-0 ml-2 user-name">{{ Auth::user()->name }}</span>
                                     </a>
-                                    <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                                    <ul class="dropdown-menu dropdown-menu-right"
+                                        aria-labelledby="dropdownMenuButton">
                                         <li class="dropdown-item  d-flex svg-icon border-top">
                                             <svg class="svg-icon mr-0 text-secondary" id="h-05-p" width="20"
                                                 xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -135,7 +135,8 @@
                 <nav class="iq-sidebar-menu">
                     <ul id="iq-sidebar-toggle" class="side-menu">
                         <li class="px-3 pt-3 pb-2">
-                            <span class="text-uppercase small font-weight-bold">Administrator / {{ Auth::user()->roles }}</span>
+                            <span class="text-uppercase small font-weight-bold">Administrator /
+                                {{ Auth::user()->roles }}</span>
                         </li>
 
                         <li class=" sidebar-layout">
@@ -174,18 +175,21 @@
                                 <span class="ml-2">Fasilitas</span>
                             </a>
                         </li>
-                        <li class=" sidebar-layout">
-                            <a href="/data-membership" class="svg-icon">
-                                <i class="">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
-                                        viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
-                                    </svg>
-                                </i>
-                                <span class="ml-2">Membership</span>
-                            </a>
-                        </li>
+                        @if (Auth::user()->role == 'Owner')
+                            <li class=" sidebar-layout">
+                                <a href="/data-membership" class="svg-icon">
+                                    <i class="">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" fill="none"
+                                            viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
+                                        </svg>
+                                    </i>
+                                    <span class="ml-2">Membership</span>
+                                </a>
+                            </li>
+                        @endif
+
                         <li class=" sidebar-layout">
                             <a href="/data-hotel-type" class="svg-icon">
                                 <i class="">
@@ -245,7 +249,7 @@
         </div>
     </footer> <!-- Backend Bundle JavaScript -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    {{-- <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script> --}}
     <script src="{{ asset('/js/backend-bundle.min.js') }}"></script>
     <!-- Chart Custom JavaScript -->
     <script src="{{ asset('/js/customizer.js') }}"></script>

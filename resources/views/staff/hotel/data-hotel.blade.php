@@ -25,6 +25,7 @@
                                             <th>Address</th>
                                             <th>Phone</th>
                                             <th>Email</th>
+                                            <th>Hotel Tipe</th>
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
@@ -36,6 +37,7 @@
                                                 <td>{{ $item->address }}</td>
                                                 <td>{{ $item->phone }}</td>
                                                 <td>{{ $item->email }}</td>
+                                                <td>{{ $item->hotel_type->name }}</td>
                                                 <td>
                                                     <button class="btn btn-sm btn-info"
                                                         onclick="editHotel({{ $item->id }})">
@@ -71,23 +73,28 @@
                             <input type="hidden" id="hotel_id">
                             <div class="form-group">
                                 <label for="name">Name</label>
-                                <input type="text" id="name" class="form-control">
+                                <input type="text" id="name" class="form-control" required>
                             </div>
                             <div class="form-group">
                                 <label for="address">Address</label>
-                                <input type="text" id="address" class="form-control">
+                                <textarea name="address" id="address" class="form-control" required></textarea>
                             </div>
                             <div class="form-group">
                                 <label for="phone">Phone</label>
-                                <input type="text" id="phone" class="form-control">
+                                <input type="number" id="phone" class="form-control" required>
                             </div>
                             <div class="form-group">
                                 <label for="email">Email</label>
-                                <input type="email" id="email" class="form-control">
+                                <input type="email" id="email" class="form-control" required>
                             </div>
                             <div class="form-group">
-                                <label for="hotels_type">Hotel Type</label>
-                                <input type="text" id="hotels_type" class="form-control">
+                                <label>Hotel Type</label>
+                                <select class="form-control" name="hotels_type" id="hotels_type" required>
+                                    <option value="">-- Pilih Hotel Type --</option>
+                                    @foreach ($hotelType as $item)
+                                        <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                    @endforeach
+                                </select>
                             </div>
                             {{-- <button type="submit" class="btn btn-primary">Save</button> --}}
                         </div>
@@ -122,22 +129,34 @@
             var id = $('#hotel_id').val();
             var url = id ? '/hotels/' + id : '/hotels'; // if edit, will using id
             var type = id ? 'PUT' : 'POST'; // if edit, use put
-
-            $.ajax({
-                url: url,
-                method: type,
-                data: {
-                    name: $('#name').val(),
-                    address: $('#address').val(),
-                    phone: $('#phone').val(),
-                    email: $('#email').val(),
-                    hotels_type: $('#hotels_type').val()
-                },
-                success: function(response) {
-                    $('#hotelModal').modal('hide');
-                    location.reload();
+            Swal.fire({
+                title: 'Simpan Data?',
+                text: 'Pastikan data yang Anda masukkan benar',
+                icon: 'success',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: url,
+                        method: type,
+                        data: {
+                            name: $('#name').val(),
+                            address: $('#address').val(),
+                            phone: $('#phone').val(),
+                            email: $('#email').val(),
+                            hotels_type: $('#hotels_type').val()
+                        },
+                        success: function(response) {
+                            $('#hotelModal').modal('hide');
+                            location.reload();
+                        }
+                    });
                 }
-            });
+            })
+
         });
 
         function editHotel(id) {

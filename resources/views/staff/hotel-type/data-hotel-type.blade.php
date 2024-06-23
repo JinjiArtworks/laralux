@@ -64,7 +64,7 @@
                             <input type="hidden" id="hotel_type_id">
                             <div class="form-group">
                                 <label for="name">Name</label>
-                                <input type="text" id="name" class="form-control">
+                                <input type="text" id="name" class="form-control" required>
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -89,7 +89,7 @@
         function showCreateForm() {
             $('#hotelForm')[0].reset();
             $('#hotel_type_id').val('');
-            $('#modalTitle').text('Add Hotel');
+            $('#modalTitle').text('Add Hotel Type');
             $('#hotelTypeModal').modal('show');
         }
 
@@ -127,7 +127,7 @@
             $.get('/hotel-type/' + id, function(hotel) {
                 $('#hotel_type_id').val(hotel.id);
                 $('#name').val(hotel.name);
-                $('#modalTitle').text('Edit Hotel');
+                $('#modalTitle').text('Edit Hotel Type');
                 $('#hotelTypeModal').modal('show');
             });
         }

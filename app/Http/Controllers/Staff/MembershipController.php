@@ -5,22 +5,44 @@ namespace App\Http\Controllers\Staff;
 use App\Http\Controllers\Controller;
 use App\Models\HotelType;
 use App\Models\Membership;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class MembershipController extends Controller
 {
     public function index()
     {
-        $membership = Membership::with('users')->get();
-        return view('staff.membership.data-membership', compact('membership'));
+        $membership = Membership::all();
+        $user = User::all();
+        return view('staff.membership.data-membership', compact('membership', 'user'));
     }
     // Add products
     public function store(Request $request)
     {
+        $rules = [
+            'name' => 'required|string|max:255',
+            'users_id' => 'required|integer|exists:users,id|unique:memberships,users_id',
+        ];
+        // Validate the incoming request data
+        // Define custom error messages
+        $messages = [
+            'users_id.unique' => 'This user already has a membership.',
+        ];
+        // Validate the request data with custom messages
+        $validator = Validator::make($request->all(), $rules, $messages);
+        // Check if validation fails
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
         $membership = Membership::create([
             'name' => $request->name,
             'users_id' => $request->users_id,
         ]);
+        User::whereId($request->users_id)
+            ->update([
+                'membership_id' => $membership->id
+            ]);
         return response()->json($membership);
     }
     public function show($id)

@@ -15,6 +15,9 @@
         rel="stylesheet">
     <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.materialdesignicons.com/6.5.95/css/materialdesignicons.min.css" />
+    <link rel="stylesheet" href="sweetalert2.min.css">
+    <script src="sweetalert2.all.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body>
@@ -47,7 +50,7 @@
                             class="h-full w-full fixed inset-0 cursor-default"></button>
                         <div x-show="isOpen" class="absolute w-34 bg-white rounded-lg shadow-lg py-2 mt-16">
                             @if (Auth::user()->role != 'customer')
-                                <a href="/data-customer" class="block px-4 py-2 text-blue-600">Lihat Toko</a>
+                                <a href="/data-room" class="block px-4 py-2 text-blue-600">Lihat Toko</a>
                             @endif
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf

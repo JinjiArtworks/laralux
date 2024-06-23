@@ -3,9 +3,13 @@
 namespace App\Http\Controllers\Customers;
 
 use App\Models\Customer;
+use App\Models\Membership;
 use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Models\Product;
+use App\Models\Room;
+use App\Models\Transaction;
+use App\Models\TransactionDetail;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -16,6 +20,7 @@ class CheckoutController extends Controller
 {
     public function index(Request $request)
     {
+        $cart = session()->get('cart');
         // dd($request->courier);
         $user = Auth::user()->id;
         $point = Auth::user()->point;
@@ -27,80 +32,56 @@ class CheckoutController extends Controller
     {
         $user = Auth::user();
         $cart = session()->get('cart');
-        $orders = new Order();
-        $orders->date = Carbon::now();
-        $orders->total = $request->grandTotal;
-        $orders->user_id = $user->id;
-        $orders->status = 'Sedang Diproses';
-        $saved =  $orders->save();
-        // dd($user->point);
-        // $user = User::find($user->id);
-        // dd($request->all());
-
-        // $getMaxPoint = round($request->total/100000); 
-        // if ($request->redemption == "Yes" && $user->point >= $getMaxPoint)
-        // {
-        //     $usedPoint = $user->point - $getMaxPoint;
-        //     ($request->total - ($usedPoint * 100000)) + 100000;
-        // } else {
-        //     if ($request->total >= 100000) {
-        //         $getPoint = round($request->total / 100000);
-        //         // dd($getPoint);
-        //         User::where('id', $user->id)
-        //             ->update(
-        //                 [
-        //                     'point' => $user->point + $getPoint,
-        //                     'membership' => 'Active'
-        //                 ]
-        //             );
-        //     } else {
-        //         $getPoint = 0;
-        //         User::where('id', $user->id)
-        //             ->update(
-        //                 [
-        //                     'point' => $user->point + $getPoint,
-        //                     'membership' => 'Active'
-        //                 ]
-        //             );
-        //     }
-        // }`
-
-
-        if ($request->total >= 100000) {
-            $getPoint = round($request->total / 100000);
-            // dd($getPoint);
+        $transaction = new Transaction();
+        $transaction->date = Carbon::now();
+        $transaction->user_id = $user->id;
+        $transaction->total_ppn = $request->total_ppn;
+        $transaction->sub_total = $request->sub_total;
+        $transaction->grand_total = $request->grandTotal;
+        $transaction->status = 'Sedang Diproses';
+        $saved =  $transaction->save();
+        if ($request->sub_total >= 100000) {
+            $getPoint = round($request->sub_total / 100000);
             User::where('id', $user->id)
                 ->update(
                     [
                         'point' => $user->point + $getPoint,
-                        'membership' => 'Active'
                     ]
                 );
+            Membership::whereUsersId($user->id)
+                ->update([
+                    'status' => 'Active',
+                    'transactions_id' => $transaction->id
+                ]);
         } else {
             $getPoint = 0;
             User::where('id', $user->id)
                 ->update(
                     [
                         'point' => $user->point + $getPoint,
-                        'membership' => 'Active'
                     ]
                 );
+
+            Membership::whereUsersId($user->id)
+                ->update([
+                    'status' => 'Active',
+                    'transactions_id' => $transaction->id
+                ]);
         }
         foreach ($cart as $item) {
-            $details = new OrderDetail();
-            $details->product_id = $item['id'];
-            $details->order_id = $orders->id;
+            $details = new TransactionDetail();
+            $details->rooms_id = $item['id'];
+            $details->transactions_id = $transaction->id;
             $details->name = $user->name;
-            $details->alamat = $user->address;
+            $details->address = $user->address;
             $details->phone = $user->phone;
-            $details->quantity = $item['quantity'];
-            $details->price = $item['price'] * $item['quantity'];
+            $details->price = $item['price'];
             $details->save();
-            $product = Product::find($item['id']);
+            $product = Room::find($item['id']);
             $product::where('id', $item['id'])
                 ->update(
                     [
-                        'stock' => $product["stock"] - $item["quantity"],
+                        'status' => 'Booked',
                     ]
                 );
         }

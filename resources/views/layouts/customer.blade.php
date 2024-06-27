@@ -34,12 +34,18 @@
                 @if (Auth::check())
                     <div x-data="{ isOpen: false }" class="relative w-1/2 flex justify-end">
                         <div class="block px-4 py-4 text-gray-200">
-                            @if (Auth::user()->role == 'staff')
-                                Anda login sebagai : {{ Auth::user()->role }}
-                            @elseif(Auth::user()->role == 'customer')
-                                Member {{ Auth::user()->membership }}. Point : {{ Auth::user()->point }}
+                            @if (Auth::user()->roles == 'Staff')
+                                Anda login sebagai : {{ Auth::user()->roles }}
+                            @elseif(Auth::user()->roles == 'Customer')
+                                Member :
+                                @if (Auth::user()->membership != null)
+                                    Active
+                                @else
+                                    Not Active
+                                @endif
+                                / Point : {{ Auth::user()->point }}
                             @else
-                                Anda login sebagai : {{ Auth::user()->role }}
+                                Anda login sebagai : {{ Auth::user()->roles }}
                             @endif
                         </div>
                         <button @click="isOpen = !isOpen"
@@ -49,7 +55,7 @@
                         <button x-show="isOpen" @click="isOpen = false"
                             class="h-full w-full fixed inset-0 cursor-default"></button>
                         <div x-show="isOpen" class="absolute w-34 bg-white rounded-lg shadow-lg py-2 mt-16">
-                            @if (Auth::user()->role != 'customer')
+                            @if (Auth::user()->roles != 'Customer')
                                 <a href="/data-room" class="block px-4 py-2 text-blue-600">Lihat Toko</a>
                             @endif
                             <form method="POST" action="{{ route('logout') }}">

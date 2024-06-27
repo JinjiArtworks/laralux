@@ -76,6 +76,14 @@ class RoomController extends Controller
         return response()->json($room);
         // return redirect('/data-room');
     }
+    public function updateStatusRoom($id)
+    {
+        $room = Room::findOrFail($id);
+        $room->update([
+            'status' => 'Available'
+        ]);
+        return response()->json($room);
+    }
     public function destroy($id)
     {
         $room = Room::findOrFail($id);

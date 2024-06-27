@@ -2,10 +2,12 @@
 @section('content')
     @php
         $total = 0;
+        $total_room = 0;
         $tax = 0.11;
         if ($cart != null) {
             foreach ($cart as $key => $value) {
                 $total += $value['price'];
+                $total_room += $value['qty'];
             }
             $afterTax = $total * $tax;
             $grandTotal = $total + $afterTax;
@@ -17,8 +19,9 @@
         <form method="POST" action="{{ route('checkout.store') }}" enctype="multipart/form-data">
             @csrf
             <input type="hidden" value="{{ $grandTotal }}" name="grandTotal">
-            <input type="hidden" value="{{ $tax }}" name="total_ppn">
+            <input type="hidden" value="{{ $afterTax }}" name="total_ppn">
             <input type="hidden" value="{{ $total }}" name="sub_total">
+            <input type="hidden" value="{{ $total_room }}" name="total_room">
             <div class="container grid grid-cols-12 items-start pb-16 pt-4 gap-6">
                 <div class="col-span-12 border border-gray-200 p-4 rounded">
                     <h4 class="text-gray-800 text-lg mb-4 font-medium uppercase">Order summary</h4>
@@ -27,33 +30,36 @@
                             <div class="flex justify-between">
                                 <div>
                                     <img src="{{ asset('img/' . $c['image']) }}" width="100px" alt="">
-                                    <h5 class="text-gray-800 font-medium">{{ $c['name'] }}</h5>
                                 </div>
+                                <h5 class="text-gray-800 font-medium">{{ $c['name'] }}</h5>
                                 <div class="">
                                     <p class="text-gray-500 text-sm">@currency($c['price'])</p>
                                 </div>
                             </div>
                     @endforeach
 
-                    <div class="flex justify-between border-b border-gray-200 mt-1 text-gray-800 font-medium py-3 uppercas">
+                    <div class="flex justify-between text-gray-800 font-medium py-3 uppercase">
                         <p>Subtotal</p>
                         <p>@currency($total)</p>
                     </div>
 
-                    <div class="flex justify-between border-b border-gray-200 mt-1 text-gray-800 font-medium py-3 uppercas">
-                        <p>Redemption</p>
-                        <select name="point" id="">
-                            <option value="Yes">Pakai Point</option>
-                            <option value="No">Tidak Pakai Point</option>
-                        </select>
-
-                    </div>
-                    <div class="flex justify-between border-b border-gray-200 mt-1 text-gray-800 font-medium py-3 uppercas">
+                    @if (Auth::user()->point > 1)
+                        <div class="flex justify-between text-gray-800 font-medium py-3 uppercase">
+                            <p>Redemption</p>
+                            <select name="point" id="">
+                                <option value="Yes">Pakai Point</option>
+                                <option value="No">Tidak Pakai Point</option>
+                            </select>
+                        </div>
+                        @else
+                        <input type="hidden" name="point" value="No">
+                    @endif
+                    <div class="flex justify-between text-gray-800 font-medium py-3 uppercase">
                         <p>Tax</p>
                         <p>@currency($afterTax) (11%)</p>
                     </div>
 
-                    <div class="flex justify-between text-gray-800 font-medium py-3 uppercas">
+                    <div class="flex justify-between text-gray-800 font-medium py-3 uppercase">
                         <p class="font-semibold">Total</p>
                         <p>@currency($grandTotal)</p>
                     </div>

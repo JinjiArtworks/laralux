@@ -20,6 +20,7 @@ class CartController extends Controller
     {
         $user = Auth::user()->id;
         $cart = session()->get('cart');
+        // dd($cart);
         return view('customer.cart', compact('cart'));
     }
     public function addCart(Request $request, $id)
@@ -36,6 +37,7 @@ class CartController extends Controller
                 "name" => $room->name,
                 "image" => $room->image,
                 "price" => $room->price,
+                "qty" => 1,
                 "facilities" => $room->facilities->name,
                 "room_type" => $room->room_type->name,
                 "hotels" => $room->hotels->name,

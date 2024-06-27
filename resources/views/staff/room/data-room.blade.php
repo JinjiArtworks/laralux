@@ -50,6 +50,12 @@
                                                         onclick="deleteRoom({{ $item->id }})">
                                                         <i class="fa fa-trash"></i>
                                                     </button>
+                                                    @if ($item->status == 'Booked')
+                                                        <button class="btn btn-sm btn-success"
+                                                            onclick="updateStatusRoom({{ $item->id }})">
+                                                            <i class="fa fa-check"></i>
+                                                        </button>
+                                                    @endif
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -120,7 +126,7 @@
                             <div class="form-group">
                                 <img src="{{ asset('img/no-profile.png') }}" id="setImages" width="150px" height="150px">
                                 <input class="form-control" accept="image/*" id="image" type="file" name="image"
-                                    required>
+                                    >
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -211,6 +217,7 @@
             });
         }
 
+
         function deleteRoom(id) {
             Swal.fire({
                 title: 'Hapus Data?',
@@ -227,6 +234,27 @@
                         method: 'DELETE',
                         success: function(response) {
                             $('#room-' + id).remove();
+                        }
+                    });
+                }
+            })
+        }
+        function updateStatusRoom(id) {
+            Swal.fire({
+                title: 'Confirm Room?',
+                text: 'This room status will change to available',
+                icon: 'success',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '/update-room/' + id,
+                        method: 'POST',
+                        success: function(response) {
+                            location.reload();
                         }
                     });
                 }

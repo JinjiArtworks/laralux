@@ -16,7 +16,7 @@
             </div>
             <div>
                 <h2 class="text-3xl font-medium uppercase mb-2"> {{ $room->name }}</h2>
-                <h4>{{ $room->price }}</h4>
+                <h3 class="mb-2"> @currency($room->price) </h3>
                 <div class="space-y-2">
                     <p class="text-gray-800 font-semibold space-x-2">
                         <span>Status: </span>

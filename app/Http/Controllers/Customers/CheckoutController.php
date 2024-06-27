@@ -21,7 +21,6 @@ class CheckoutController extends Controller
     public function index(Request $request)
     {
         $cart = session()->get('cart');
-        // dd($request->courier);
         $user = Auth::user()->id;
         $point = Auth::user()->point;
         $cart = session()->get('cart');
@@ -30,6 +29,7 @@ class CheckoutController extends Controller
     }
     public function store(Request $request)
     {
+        // dd($request->all());
         $user = Auth::user();
         $cart = session()->get('cart');
         $transaction = new Transaction();
@@ -40,45 +40,116 @@ class CheckoutController extends Controller
         $transaction->grand_total = $request->grandTotal;
         $transaction->status = 'Sedang Diproses';
         $saved =  $transaction->save();
-        if ($request->sub_total >= 100000) {
-            $getPoint = round($request->sub_total / 100000);
-            User::where('id', $user->id)
-                ->update(
-                    [
-                        'point' => $user->point + $getPoint,
-                    ]
-                );
-            Membership::whereUsersId($user->id)
-                ->update([
-                    'status' => 'Active',
-                    'transactions_id' => $transaction->id
-                ]);
-        } else {
-            $getPoint = 0;
-            User::where('id', $user->id)
-                ->update(
-                    [
-                        'point' => $user->point + $getPoint,
-                    ]
-                );
 
-            Membership::whereUsersId($user->id)
-                ->update([
-                    'status' => 'Active',
-                    'transactions_id' => $transaction->id
-                ]);
-        }
         foreach ($cart as $item) {
             $details = new TransactionDetail();
             $details->rooms_id = $item['id'];
+            $details->price = $item['price'];
             $details->transactions_id = $transaction->id;
             $details->name = $user->name;
             $details->address = $user->address;
             $details->phone = $user->phone;
-            $details->price = $item['price'];
             $details->save();
-            $product = Room::find($item['id']);
-            $product::where('id', $item['id'])
+            // Redemption Point (Pengurangan Point)
+            if ($item['room_type'] == 'Deluxe' || $item['room_type'] == 'Superior' || $item['room_type'] == 'Suite') {
+                if ($request->sub_total >= 100000) {
+                    $getMember = Membership::whereUsersId($user->id)->first();
+                    $getPoint = 0;
+                    $getPoint = floor($request->sub_total / 100000);
+                    if ($getMember->status == 'Active') {
+                        if ($request->point == 'Yes') {
+                            User::where('id', $user->id)
+                                ->update(
+                                    [
+                                        'point' => $user->point - $getPoint,
+                                    ]
+                                );
+                        } else {
+                            User::where('id', $user->id)
+                                ->update(
+                                    [
+                                        'point' => $user->point + (5 * $request->total_room),
+                                    ]
+                                );
+                        }
+                    }
+                } else {
+                    User::where('id', $user->id)
+                        ->update(
+                            [
+                                'point' => $user->point + (5 * $request->total_room),
+                            ]
+                        );
+                }
+            } else {
+                if ($request->sub_total >= 300000) {
+                    $getPoint = 0;
+                    $getPoint = floor($request->sub_total / 300000);
+                    User::where('id', $user->id)
+                        ->update(
+                            [
+                                'point' => $user->point + $getPoint,
+                            ]
+                        );
+                // } else if ($request->sub_total >= 100000) {
+                } else {
+                    $getMember = Membership::whereUsersId($user->id)->first();
+                    $getPoint = 0;
+                    $getPoint = floor($request->sub_total / 100000);
+                    if ($getMember->status == 'Active') {
+                        if ($request->point == 'Yes') {
+                            User::where('id', $user->id)
+                                ->update(
+                                    [
+                                        'point' => $user->point - $getPoint,
+                                    ]
+                                );
+                        } else {
+                            User::where('id', $user->id)
+                                ->update(
+                                    [
+                                        'point' => $user->point + $getPoint,
+                                    ]
+                                );
+                        }
+                    }
+                }
+            }
+            // else {
+            //     if ($item['room_type'] == 'Deluxe' || $item['room_type'] == 'Superior' || $item['room_type'] == 'Suite') {
+            //         User::where('id', $user->id)
+            //             ->update(
+            //                 [
+            //                     'point' => $user->point + (5 * $request->total_room),
+            //                 ]
+            //             );
+            //     } else {
+            //         if ($request->sub_total >= 300000) {
+            //             $getPoint = 0;
+            //             $getPoint = floor($request->sub_total / 300000);
+            //             User::where('id', $user->id)
+            //                 ->update(
+            //                     [
+            //                         'point' => $user->point + $getPoint,
+            //                     ]
+            //                 );
+            //         } else if ($request->sub_total >= 100000) {
+            //             $getMember = Membership::whereUsersId($user->id)->first();
+            //             $getPoint = 0;
+            //             $getPoint = floor($request->sub_total / 100000);
+            //             if ($getMember->status == 'Active') {
+            //                 User::where('id', $user->id)
+            //                     ->update(
+            //                         [
+            //                             'point' => $user->point + $getPoint,
+            //                         ]
+            //                     );
+            //             }
+            //         }
+            //     }
+            // }
+            $room = Room::find($item['id']);
+            $room::where('id', $item['id'])
                 ->update(
                     [
                         'status' => 'Booked',

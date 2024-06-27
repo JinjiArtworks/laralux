@@ -21,7 +21,6 @@ class MembershipController extends Controller
     public function store(Request $request)
     {
         $rules = [
-            'name' => 'required|string|max:255',
             'users_id' => 'required|integer|exists:users,id|unique:memberships,users_id',
         ];
         // Validate the incoming request data
@@ -36,7 +35,7 @@ class MembershipController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
         $membership = Membership::create([
-            'name' => $request->name,
+            'status' => $request->status,
             'users_id' => $request->users_id,
         ]);
         User::whereId($request->users_id)
@@ -59,6 +58,10 @@ class MembershipController extends Controller
     public function destroy($id)
     {
         $membership = Membership::findOrFail($id);
+        User::whereId($membership->users_id)
+            ->update([
+                'membership_id' => null
+            ]);
         $membership->delete();
         return response()->json(['success' => 'Hotel deleted successfully']);
     }

@@ -19,8 +19,7 @@
                                     <thead>
                                         <tr>
                                             <th>User</th>
-                                            <th>Name</th>
-                                            <th>Transaksi</th>
+                                            <th>Status</th>
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
@@ -29,12 +28,7 @@
                                             <tr id="membership-{{ $item->id }}">
                                                 <td>{{ $item->users->name }}</td>
                                                 {{-- <td>{{ $item->users_id }}</td> --}}
-                                                <td>{{ $item->name }}</td>
-                                                @if ($item->transaction_id != null)
-                                                    <td>{{ $item->transaction_id }}</td>
-                                                @else
-                                                    <td class="font-italic">-Belum ada transaksi-</td>
-                                                @endif
+                                                <td>{{ $item->status }}</td>
                                                 <td>
                                                     <button class="btn btn-sm btn-info"
                                                         onclick="editMembership({{ $item->id }})">
@@ -69,10 +63,6 @@
                         <div class="modal-body">
                             <input type="hidden" id="membership_id">
                             <div class="form-group">
-                                <label for="name">Name</label>
-                                <input type="text" id="name" class="form-control" required>
-                            </div>
-                            <div class="form-group">
                                 <label for="users_id">User </label>
                                 <select class="form-control" id="users_id" required>
                                     <option value="">-- Pilih User --</option>
@@ -80,12 +70,15 @@
                                         <option value="{{ $item->id }}">{{ $item->name }}</option>
                                     @endforeach
                                 </select>
-                                {{-- <input type="text" id="users_id" class="form-control"> --}}
                             </div>
-                            {{-- <div class="form-group">
-                                <label for="membership_type">Hotel Type</label>
-                                <input type="text" id="membership_type" class="form-control">
-                            </div> --}}
+                            <div class="form-group">
+                                <label for="status">Status </label>
+                                <select class="form-control" id="status" required>
+                                    <option value="">-- Pilih Status --</option>
+                                    <option value="Active">Active</option>
+                                    <option value="Non Active">Non Active</option>
+                                </select>
+                            </div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" data-dismiss="modal" aria-label="Close"
@@ -132,7 +125,7 @@
                         url: url,
                         method: type,
                         data: {
-                            name: $('#name').val(),
+                            status: $('#status').val(),
                             users_id: $('#users_id').val(),
                             // transaction_id: $('#transaction_id').val(),
                         },
@@ -164,7 +157,7 @@
         function editMembership(id) {
             $.get('/membership/' + id, function(membership) {
                 $('#membership_id').val(membership.id);
-                $('#name').val(membership.name);
+                $('#status').val(membership.status);
                 $('#users_id').val(membership.users_id);
                 // $('#transaction_id').val(membership.transaction_id);
                 $('#modalTitle').text('Edit Membership');

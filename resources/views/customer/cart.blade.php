@@ -23,26 +23,26 @@
     @else
         {{-- {{ dd($cart) }} --}}
         @foreach ($cart as $key => $c)
-            <form action="{{ route('cart.remove', ['id' => $c['id']]) }}" method="GET">
-                <div class="container grid grid-cols-2 gap-6 mb-5">
-                    <div class="col-span-12 space-y-4">
-                        <div class="flex items-center justify-between border gap-6 p-4 border-gray-200 rounded">
-                            <div class="w-28">
-                                <img src="{{ asset('img/' . $c['image']) }}" alt="product 6" class="w-full">
-                            </div>
-                            <div class="w-1/3">
-                                <h2 class="text-gray-800 text-xl font-medium uppercase">{{ $c['name'] }}</h2>
-                                <p class="text-gray-500 text-sm">@currency($c['price'])</p>
-                                <div class="text-primary text-lg font-semibold"></div>
-                            </div>
-
-                            <button type="submit" class="deleteCart flex items-center px-2 py-1 pl-0 space-x-1 text-red-600">
+            <div class="container grid grid-cols-2 gap-6 mb-5">
+                <div class="col-span-12 space-y-4">
+                    <div class="flex items-center justify-between border gap-6 p-4 border-gray-200 rounded">
+                        <div class="w-28">
+                            <img src="{{ asset('img/' . $c['image']) }}" alt="product 6" class="w-full">
+                        </div>
+                        <div class="w-1/3">
+                            <h2 class="text-gray-800 text-xl font-medium uppercase">{{ $c['name'] }}</h2>
+                            <p class="text-gray-500 text-sm">@currency($c['price'])</p>
+                            <div class="text-primary text-lg font-semibold"></div>
+                        </div>
+                        <form action="{{ route('cart.remove', ['id' => $c['id']]) }}" method="GET">
+                            <button type="submit"
+                                class="deleteCart flex items-center px-2 py-1 pl-0 space-x-1 text-red-600">
                                 Remove
                             </button>
-                        </div>
+                        </form>
                     </div>
                 </div>
-            </form>
+            </div>
         @endforeach
         <form method="POST" action="{{ route('checkout.index') }}" enctype="multipart/form-data">
             @csrf

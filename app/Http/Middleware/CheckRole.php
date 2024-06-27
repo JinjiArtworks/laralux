@@ -17,7 +17,7 @@ class CheckRole
      */
     public function handle(Request $request, Closure $next, $role)
     {
-        if (!Auth::check() || Auth::user()->role !== $role) {
+        if (!Auth::check() || Auth::user()->roles !== $role) {
             // If the user is not authenticated or doesn't have the required role
             return response()->view('errors.403', [], 403);
             // return response()->json(['error' => 'Unauthorizedz'], 403);

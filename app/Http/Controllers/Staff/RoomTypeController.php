@@ -37,6 +37,6 @@ class RoomTypeController extends Controller
     {
         $roomType = RoomType::findOrFail($id);
         $roomType->delete();
-        return response()->json(['success' => 'Hotel deleted successfully']);
+        return response()->json(['success' => 'Room Type deleted successfully']);
     }
 }

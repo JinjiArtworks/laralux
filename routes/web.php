@@ -25,7 +25,8 @@ Route::group(['as' => 'homepage.'], function () {
     Route::get('/detail-product/{id}', [ProductController::class, 'detail']);
 });
 
-Route::middleware(['auth'])->group(function () {
+// Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'checkRole:Customer'])->group(function () {
     Route::group(['as' => 'cart.'], function () {
         Route::get('/cart', [CartController::class, 'index'])->name('index');
         Route::post('/add-to-cart/{id}', [CartController::class, 'addCart'])->name('add');
@@ -40,11 +41,12 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/riwayat-detail/{id}', [HistoryController::class, 'detail'])->name('detail');
     });
 });
-
-Route::middleware(['auth', 'checkRole:Staff'])->group(function () {
+Route::middleware(['auth'])->group(function () {
+    // Route::middleware(['auth', 'checkRole:Staff'])->group(function () {
     Route::group(['as' => 'room.'], function () {
-        Route::get('/data-room', [RoomController::class, 'index']);
+        Route::get('/data-room', [RoomController::class, 'index'])->name('index');
         Route::resource('room', RoomController::class);
+        Route::post('/update-room/{id}', [RoomController::class, 'updateStatusRoom'])->name('updateStatusRoom');
     });
     Route::group(['as' => 'hotel.'], function () {
         Route::get('/data-hotel', [HotelController::class, 'index']);
@@ -58,13 +60,42 @@ Route::middleware(['auth', 'checkRole:Staff'])->group(function () {
         Route::get('/data-hotel-type', [HotelTypeController::class, 'index']);
         Route::resource('hotel-type', HotelTypeController::class);
     });
-    Route::group(['as' => 'membership.'], function () {
-        Route::get('/data-membership', [MembershipController::class, 'index']);
-        Route::resource('membership', MembershipController::class);
-    });
     Route::group(['as' => 'room-type.'], function () {
         Route::get('/data-room-type', [RoomTypeController::class, 'index']);
         Route::resource('room-type', RoomTypeController::class);
     });
+    Route::group(['as' => 'membership.'], function () {
+        Route::get('/data-membership', [MembershipController::class, 'index']);
+        Route::resource('membership', MembershipController::class);
+    });
 });
+
+// Route::middleware(['auth', 'checkRole:Owner'])->group(function () {
+//     Route::group(['as' => 'membership.'], function () {
+//         Route::get('/data-membership', [MembershipController::class, 'index']);
+//         Route::resource('membership', MembershipController::class);
+//     });
+//     Route::middleware(['auth', 'checkRole:Owner'])->group(function () {
+//         Route::group(['as' => 'room.'], function () {
+//             Route::get('/data-room', [RoomController::class, 'index']);
+//             Route::resource('room', RoomController::class);
+//         });
+//         Route::group(['as' => 'hotel.'], function () {
+//             Route::get('/data-hotel', [HotelController::class, 'index']);
+//             Route::resource('hotels', HotelController::class);
+//         });
+//         Route::group(['as' => 'fasilitas.'], function () {
+//             Route::get('/data-fasilitas', [FacilitiesController::class, 'index']);
+//             Route::resource('fasilitas', FacilitiesController::class);
+//         });
+//         Route::group(['as' => 'hotel-type.'], function () {
+//             Route::get('/data-hotel-type', [HotelTypeController::class, 'index']);
+//             Route::resource('hotel-type', HotelTypeController::class);
+//         });
+//         Route::group(['as' => 'room-type.'], function () {
+//             Route::get('/data-room-type', [RoomTypeController::class, 'index']);
+//             Route::resource('room-type', RoomTypeController::class);
+//         });
+//     });
+// });
 require __DIR__ . '/auth.php';

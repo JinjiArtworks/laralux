@@ -7,10 +7,10 @@
                     <div class="card">
                         <div class="card-header d-flex justify-content-between">
                             <div class="header-title">
-                                <h4 class="card-title">Daftar Hotel</h4>
+                                <h4 class="card-title">Daftar Room Type</h4>
                             </div>
                             <div class="header-action">
-                                <button class="btn btn-sm btn-primary" onclick="showCreateForm()">Add Hotel</button>
+                                <button class="btn btn-sm btn-primary" onclick="showCreateForm()">Add Room Type</button>
                             </div>
                         </div>
                         <div class="card-body">
@@ -20,27 +20,20 @@
                                         <tr>
                                             {{-- <th>ID</th> --}}
                                             <th>Name</th>
-                                            <th>Address</th>
-                                            <th>Phone</th>
-                                            <th>Email</th>
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
-                                    <tbody id="hotel-table">
-                                        @foreach ($hotel as $item)
-                                            <tr id="hotel-{{ $item->id }}">
-                                                {{-- <td>{{ $item->id }}</td> --}}
+                                    <tbody id="roomtype-table">
+                                        @foreach ($roomType as $item)
+                                            <tr id="roomtype-{{ $item->id }}">
                                                 <td>{{ $item->name }}</td>
-                                                <td>{{ $item->address }}</td>
-                                                <td>{{ $item->phone }}</td>
-                                                <td>{{ $item->email }}</td>
                                                 <td>
                                                     <button class="btn btn-sm btn-info"
-                                                        onclick="editHotel({{ $item->id }})">
+                                                        onclick="editRoomType({{ $item->id }})">
                                                         <i class="fa-solid fa-pencil"></i>
                                                     </button>
                                                     <button class="btn btn-sm btn-danger"
-                                                        onclick="deleteHotel({{ $item->id }})">
+                                                        onclick="deleteRoomType({{ $item->id }})">
                                                         <i class="fa fa-trash"></i>
                                                     </button>
                                                 </td>
@@ -55,39 +48,22 @@
             </div>
         </div>
         <!-- Create/Edit Modal -->
-        <div class="modal fade" id="hotelModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal fade" id="roomTypeModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="modalTitle">Add Hotel</h5>
+                        <h5 class="modal-title" id="modalTitle">Add Room Type</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <form id="hotelForm">
+                    <form id="roomTypeForm">
                         <div class="modal-body">
-                            <input type="hidden" id="hotel_id">
+                            <input type="hidden" id="room_type_id">
                             <div class="form-group">
                                 <label for="name">Name</label>
                                 <input type="text" id="name" class="form-control">
                             </div>
-                            <div class="form-group">
-                                <label for="address">Address</label>
-                                <input type="text" id="address" class="form-control">
-                            </div>
-                            <div class="form-group">
-                                <label for="phone">Phone</label>
-                                <input type="text" id="phone" class="form-control">
-                            </div>
-                            <div class="form-group">
-                                <label for="email">Email</label>
-                                <input type="email" id="email" class="form-control">
-                            </div>
-                            <div class="form-group">
-                                <label for="hotels_type">Hotel Type</label>
-                                <input type="text" id="hotels_type" class="form-control">
-                            </div>
-                            {{-- <button type="submit" class="btn btn-primary">Save</button> --}}
                         </div>
                         <div class="modal-footer">
                             <button type="button" data-dismiss="modal" aria-label="Close"
@@ -109,16 +85,16 @@
         });
 
         function showCreateForm() {
-            $('#hotelForm')[0].reset();
-            $('#hotel_id').val('');
-            $('#modalTitle').text('Add Hotel');
-            $('#hotelModal').modal('show');
+            $('#roomTypeForm')[0].reset();
+            $('#room_type_id').val('');
+            $('#modalTitle').text('Add Room Type');
+            $('#roomTypeModal').modal('show');
         }
 
-        $('#hotelForm').submit(function(e) {
+        $('#roomTypeForm').submit(function(e) {
             e.preventDefault();
-            var id = $('#hotel_id').val();
-            var url = id ? '/hotels/' + id : '/hotels'; // if edit, will using id
+            var id = $('#room_type_id').val();
+            var url = id ? '/room-type/' + id : '/room-type'; // if edit, will using id
             var type = id ? 'PUT' : 'POST'; // if edit, use put
 
             $.ajax({
@@ -126,32 +102,24 @@
                 method: type,
                 data: {
                     name: $('#name').val(),
-                    address: $('#address').val(),
-                    phone: $('#phone').val(),
-                    email: $('#email').val(),
-                    hotels_type: $('#hotels_type').val()
                 },
                 success: function(response) {
-                    $('#hotelModal').modal('hide');
+                    $('#roomTypeModal').modal('hide');
                     location.reload();
                 }
             });
         });
 
-        function editHotel(id) {
-            $.get('/hotels/' + id, function(hotel) {
-                $('#hotel_id').val(hotel.id);
-                $('#name').val(hotel.name);
-                $('#address').val(hotel.address);
-                $('#phone').val(hotel.phone);
-                $('#email').val(hotel.email);
-                $('#hotels_type').val(hotel.hotels_type_id);
-                $('#modalTitle').text('Edit Hotel');
-                $('#hotelModal').modal('show');
+        function editRoomType(id) {
+            $.get('/room-type/' + id, function(roomType) {
+                $('#room_type_id').val(roomType.id);
+                $('#name').val(roomType.name);
+                $('#modalTitle').text('Edit Room Type');
+                $('#roomTypeModal').modal('show');
             });
         }
 
-        function deleteHotel(id) {
+        function deleteRoomType(id) {
             Swal.fire({
                 title: 'Hapus Data?',
                 text: 'Data yang anda pilih akan dihapus secara permanen',
@@ -163,10 +131,10 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
-                        url: '/hotels/' + id,
+                        url: '/room-type/' + id,
                         method: 'DELETE',
                         success: function(response) {
-                            $('#hotel-' + id).remove();
+                            $('#roomtype-' + id).remove();
                         }
                     });
                 }

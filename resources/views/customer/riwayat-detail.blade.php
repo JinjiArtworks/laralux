@@ -35,7 +35,7 @@
         <div class="col-span-12 space-y-4">
             <div class="flex items-center justify-between border gap-6 p-4 border-gray-200 rounded">
                 <div class="w-1/3">
-                    <h2 class="text-gray-800 text-xl font-medium">Grandto </h2>
+                    <h2 class="text-gray-800 text-xl font-medium">Grand total </h2>
                     <p class="text-gray-500 text-sm">Tax : @currency($afterTax) (11%)</p>
                 </div>
                 <div class="text-primary text-lg font-semibold">@currency($grandTotal)</div>

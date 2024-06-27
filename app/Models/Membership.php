@@ -10,7 +10,7 @@ class Membership extends Model
     use HasFactory;
     protected $table = 'memberships';
     protected $guarded = ['id'];
-    protected $fillable = ['name', 'users_id', 'transactions_id', 'status'];
+    protected $fillable = ['users_id', 'status'];
     public function transaction()
     {
         return $this->belongsTo(Transaction::class);

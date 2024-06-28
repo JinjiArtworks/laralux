@@ -42,6 +42,7 @@ class CheckoutController extends Controller
         $saved =  $transaction->save();
 
         foreach ($cart as $item) {
+            // dd($cart);
             $details = new TransactionDetail();
             $details->rooms_id = $item['id'];
             $details->price = $item['price'];
@@ -50,7 +51,6 @@ class CheckoutController extends Controller
             $details->address = $user->address;
             $details->phone = $user->phone;
             $details->save();
-            // Redemption Point (Pengurangan Point)
             if ($item['room_type'] == 'Deluxe' || $item['room_type'] == 'Superior' || $item['room_type'] == 'Suite') {
                 if ($request->sub_total >= 100000) {
                     $getMember = Membership::whereUsersId($user->id)->first();
@@ -58,6 +58,38 @@ class CheckoutController extends Controller
                     $getPoint = floor($request->sub_total / 100000);
                     if ($getMember->status == 'Active') {
                         if ($request->point == 'Yes') {
+                            // Redeem Point
+                            User::where('id', $user->id)
+                                ->update(
+                                    [
+                                        'point' => abs($user->point + (5 * 1)) - $getPoint,
+                                    ]
+                                );
+                        } else {
+                            User::where('id', $user->id)
+                                ->update(
+                                    [
+                                        'point' => $user->point + (5 * 1),
+                                    ]
+                                );
+                        }
+                    }
+                } else {
+                    // Not Reedem
+                    User::where('id', $user->id)
+                        ->update(
+                            [
+                                'point' => $user->point + (5 * 1),
+                            ]
+                        );
+                }
+            } else {
+                if ($request->sub_total >= 300000) {
+                    $getMember = Membership::whereUsersId($user->id)->first();
+                    $getPoint = 0;
+                    $getPoint = floor($request->sub_total / 100000);
+                    if ($getMember->status == 'Active') {
+                        if ($request->point == 'Yes') { // Redemption Point.
                             User::where('id', $user->id)
                                 ->update(
                                     [
@@ -68,30 +100,12 @@ class CheckoutController extends Controller
                             User::where('id', $user->id)
                                 ->update(
                                     [
-                                        'point' => $user->point + (5 * $request->total_room),
+                                        'point' => $user->point + $getPoint,
                                     ]
                                 );
                         }
                     }
-                } else {
-                    User::where('id', $user->id)
-                        ->update(
-                            [
-                                'point' => $user->point + (5 * $request->total_room),
-                            ]
-                        );
-                }
-            } else {
-                if ($request->sub_total >= 300000) {
-                    $getPoint = 0;
-                    $getPoint = floor($request->sub_total / 300000);
-                    User::where('id', $user->id)
-                        ->update(
-                            [
-                                'point' => $user->point + $getPoint,
-                            ]
-                        );
-                // } else if ($request->sub_total >= 100000) {
+                    // } else if ($request->sub_total >= 100000) {
                 } else {
                     $getMember = Membership::whereUsersId($user->id)->first();
                     $getPoint = 0;
@@ -120,7 +134,7 @@ class CheckoutController extends Controller
             //         User::where('id', $user->id)
             //             ->update(
             //                 [
-            //                     'point' => $user->point + (5 * $request->total_room),
+            //                     'point' => $user->point + (5 * 1),
             //                 ]
             //             );
             //     } else {
